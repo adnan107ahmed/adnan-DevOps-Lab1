@@ -1,38 +1,33 @@
-name: CI/CD for Static Website
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - master  # Trigger workflow when changes are pushed to the main branch
+      - master  # Trigger workflow on pushes to the master branch
 
 jobs:
   build:
-    runs-on: ubuntu-latest # Run the pipeline on the latest Ubuntu environment
+    runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out your repository
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js (optional, for running build tools if needed)
-    - name: Set up Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16 # Use Node.js 16.x (adjust if necessary)
+        node-version: '16'  # Specify the Node.js version
 
-    # Step 3: Install dependencies (skip if no `package.json` is present)
     - name: Install dependencies
-      run: npm install
-      if: exists('package.json')
+      run: |
+        npm install # Adjust if you use a package manager like yarn or don't need this
 
-    # Step 4: Run a build script (skip if no `package.json` or build script)
-    - name: Build the project
-      run: npm run build
-      if: exists('package.json')
+    - name: Build Project
+      run: |
+        npm run build # Adjust based on how your site is built
 
-    # Step 5: Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub token for authentication
-        publish_dir: ./ # Directory to publish (use `./dist` if a build generates files)
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist # Replace with the directory containing your built site
